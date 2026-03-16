@@ -294,3 +294,11 @@ Username: sa  |  Password: (empty)
 | `DataInitializer.java` | Seeds Permission → Role → User hierarchy |
 | `generate-certs.sh` | PKI: Root CA → Server Cert + Client Cert |
 | `application.yml` | TLS, mTLS, OAuth2 client + resource server config |
+
+
+## Provider
+Keycloak 22.0.1 (self-hosted IdP)
+- Realm: `demo`
+- Client: `demo-app` (confidential, auth code flow, JWKS endpoint enabled)
+- Roles: `admin`, `manager`, `user`
+- Users: `alice` (user), `bob` (manager), `carol` (admin) with password `password123`

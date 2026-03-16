@@ -1,6 +1,7 @@
 package com.example.security.service;
 
 import com.example.security.model.*;
+import com.example.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

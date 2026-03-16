@@ -1,9 +1,9 @@
 package com.example.security.service;
 
+import com.example.security.config.AbacProperties;
 import com.example.security.model.User;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -34,18 +34,11 @@ import java.util.Map;
 @Slf4j
 public class AbacPolicyService {
 
-    @Value("${app.abac.office-hours-start:8}")
-    private int officeHoursStart;
-
-    @Value("${app.abac.office-hours-end:20}")
-    private int officeHoursEnd;
-
-    @Value("${app.abac.allowed-ip-ranges}")
-    private List<String> allowedIpRanges;
-
+    private final AbacProperties abacProperties;
     private final UserService userService;
 
-    public AbacPolicyService(UserService userService) {
+    public AbacPolicyService(AbacProperties abacProperties, UserService userService) {
+        this.abacProperties = abacProperties;
         this.userService = userService;
     }
 
@@ -130,7 +123,18 @@ public class AbacPolicyService {
 
     private boolean isWithinOfficeHours() {
         int hour = LocalTime.now().getHour();
-        return hour >= officeHoursStart && hour < officeHoursEnd;
+        return hour >= abacProperties.getOfficeHoursStart() && hour < abacProperties.getOfficeHoursEnd();
+    }
+
+    private boolean isIpAllowed(String clientIp) {
+        // If no allowed IP ranges configured, allow all
+        if (abacProperties.getAllowedIpRanges().isEmpty()) {
+            return true;
+        }
+        // In a real app, validate CIDR ranges or IP addresses
+        // For now, simple string matching
+        return abacProperties.getAllowedIpRanges().stream()
+            .anyMatch(clientIp::contains);
     }
 
     private String getCurrentClientIp() {

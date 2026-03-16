@@ -3,6 +3,7 @@ package com.example.security.service;
 import com.example.security.model.Permission;
 import com.example.security.model.Role;
 import com.example.security.model.User;
+import com.example.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -65,9 +66,3 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 }
 
-// ─── Repository ────────────────────────────────────────────────────────────────
-
-interface UserRepository extends org.springframework.data.jpa.repository.JpaRepository<User, Long> {
-    Optional<User> findByUsername(String username);
-    Optional<User> findByExternalId(String externalId);
-}

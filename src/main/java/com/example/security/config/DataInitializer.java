@@ -3,7 +3,7 @@ package com.example.security.config;
 import com.example.security.model.Permission;
 import com.example.security.model.Role;
 import com.example.security.model.User;
-import com.example.security.service.UserRepository;
+import com.example.security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;

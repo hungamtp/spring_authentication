@@ -76,16 +76,16 @@ public class CustomOidcUserService extends OidcUserService {
      */
     private Set<String> extractRolesFromIdp(OidcUser oidcUser, String registrationId) {
         return switch (registrationId) {
-            case "auth0" -> {
-                // Auth0: custom namespace claim (configured in Auth0 Action/Rule)
-                Object roles = oidcUser.getClaim("https://myapp.com/roles");
-                yield toStringSet(roles);
-            }
-            case "okta" -> {
-                // Okta: groups claim (configured in Okta app's Groups Claims filter)
-                Object groups = oidcUser.getClaim("groups");
-                yield toStringSet(groups);
-            }
+//            case "auth0" -> {
+//                // Auth0: custom namespace claim (configured in Auth0 Action/Rule)
+//                Object roles = oidcUser.getClaim("https://myapp.com/roles");
+//                yield toStringSet(roles);
+//            }
+//            case "okta" -> {
+//                // Okta: groups claim (configured in Okta app's Groups Claims filter)
+//                Object groups = oidcUser.getClaim("groups");
+//                yield toStringSet(groups);
+//            }
             case "keycloak" -> {
                 // Keycloak: nested claim — realm_access.roles
                 Map<String, Object> realmAccess = oidcUser.getClaim("realm_access");
