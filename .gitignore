@@ -1,3 +1,5 @@
 *.yml
 target/
 /.idea
+/src/main/resources/application-*.yml
+/src/main/resources/certs
