@@ -1,0 +1,108 @@
+server:
+  port: 8443
+  ssl:
+    # ── TLS / mTLS Configuration ─────────────────────────────────────────────
+    enabled: true
+    key-store: classpath:certs/server-keystore.p12
+    key-store-password: changeit
+    key-store-type: PKCS12
+    key-alias: server
+
+    # mTLS: require client certificates
+    client-auth: need                        # want = optional, need = required
+    trust-store: classpath:certs/truststore.p12
+    trust-store-password: changeit
+    trust-store-type: PKCS12
+
+spring:
+  application:
+    name: spring-security-demo
+
+  datasource:
+    url: jdbc:h2:mem:securitydb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # ── OAuth2 / OIDC / IdP (CIAM) Configuration ──────────────────────────────
+  security:
+    oauth2:
+      # Resource Server: validate JWTs issued by your IdP
+      resourceserver:
+        jwt:
+          # Point to your IdP's JWKS endpoint so Spring can verify JWT signatures
+          # Replace with your actual IdP (Auth0, Okta, Keycloak, Cognito, etc.)
+          jwk-set-uri: https://YOUR_IDP_DOMAIN/.well-known/jwks.json
+          # Or use issuer-uri for auto-discovery:
+          # issuer-uri: https://YOUR_IDP_DOMAIN
+
+      # OAuth2 Client: OIDC login flow
+      client:
+        registration:
+          # ── Auth0 (CIAM example) ─────────────────────────────────────────
+          auth0:
+            client-id: YOUR_AUTH0_CLIENT_ID
+            client-secret: YOUR_AUTH0_CLIENT_SECRET
+            scope: openid, profile, email, roles
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+
+          # ── Okta (IdP/Workforce example) ─────────────────────────────────
+          okta:
+            client-id: YOUR_OKTA_CLIENT_ID
+            client-secret: YOUR_OKTA_CLIENT_SECRET
+            scope: openid, profile, email, groups
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            authorization-grant-type: authorization_code
+
+          # ── Google (Social CIAM example) ──────────────────────────────────
+          google:
+            client-id: YOUR_GOOGLE_CLIENT_ID
+            client-secret: YOUR_GOOGLE_CLIENT_SECRET
+            scope: openid, profile, email
+
+          # ── Keycloak (self-hosted IdP) ────────────────────────────────────
+          keycloak:
+            client-id: spring-demo
+            client-secret: YOUR_KEYCLOAK_SECRET
+            scope: openid, profile, email, roles
+            authorization-grant-type: authorization_code
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+
+        provider:
+          auth0:
+            issuer-uri: https://YOUR_AUTH0_DOMAIN/
+          okta:
+            issuer-uri: https://YOUR_OKTA_DOMAIN/oauth2/default
+          keycloak:
+            issuer-uri: http://localhost:8080/realms/YOUR_REALM
+
+# ── App-specific JWT settings (for locally-issued JWTs) ─────────────────────
+app:
+  jwt:
+    secret: "your-256-bit-secret-key-replace-in-production-use-env-var"
+    expiration-ms: 3600000       # 1 hour
+    refresh-expiration-ms: 86400000  # 24 hours
+
+  # ── ABAC Policy settings ───────────────────────────────────────────────────
+  abac:
+    office-hours-start: 8
+    office-hours-end: 20
+    allowed-ip-ranges:
+      - "192.168.0.0/16"
+      - "10.0.0.0/8"
+
+logging:
+  level:
+    org.springframework.security: DEBUG
+    com.example.security: DEBUG
